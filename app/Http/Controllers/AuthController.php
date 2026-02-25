@@ -62,4 +62,11 @@ class AuthController extends Controller
 
     return redirect('/dashboard');
    }
+
+
+   public function logout()
+    {
+        session()->flush();
+        return redirect('/login');
+    }
 }
