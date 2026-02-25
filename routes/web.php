@@ -9,4 +9,6 @@ Route::get('/', function () {
 use App\Http\Controllers\AuthController;
 
 Route::get('/register', [AuthController::class, 'showRegister']);
+Route::post('/register', [AuthController::class, 'register']);
+
 
