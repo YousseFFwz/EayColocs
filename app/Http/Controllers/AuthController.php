@@ -33,4 +33,33 @@ class AuthController extends Controller
 
         return redirect('/dashboard');
     }
+
+
+    public function showLogin()
+    {
+        return view('auth.login');
+    }
+
+
+     public function login(Request $request)
+    {
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return back()->with('error', 'Invalid credentials');
+    }
+
+    if ($user->is_banned) {
+        return back()->with('error', 'You are banned');
+    }
+
+    session(['user_id' => $user->id]);
+
+    
+    if ($user->role === 'admin') {
+        return redirect('/admin');
+    }
+
+    return redirect('/dashboard');
+   }
 }
