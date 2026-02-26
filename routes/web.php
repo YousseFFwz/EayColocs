@@ -16,3 +16,9 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/logout', [AuthController::class, 'logout']);
 
+
+
+use App\Http\Controllers\DashboardController;
+
+Route::middleware('auth')->get('/dashboard', [DashboardController::class, 'index']);
+
