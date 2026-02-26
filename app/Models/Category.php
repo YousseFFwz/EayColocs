@@ -10,4 +10,6 @@ class Category extends Model
     'name',
     'colocation_id'
 ];
+
+
 }

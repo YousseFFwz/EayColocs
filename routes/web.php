@@ -27,4 +27,5 @@ Route::middleware('auth')->get('/dashboard', [DashboardController::class, 'index
 use App\Http\Controllers\ColocationController;
 
 Route::get('/colocation/create', [ColocationController::class, 'create']);
+Route::post('/colocation/store', [ColocationController::class, 'store']);
 

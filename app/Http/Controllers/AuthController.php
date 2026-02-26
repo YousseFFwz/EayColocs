@@ -16,7 +16,7 @@ class AuthController extends Controller
 
 
     public function register(Request $request)
-    {
+{
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
@@ -30,10 +30,10 @@ class AuthController extends Controller
             'role' => 'user'
         ]);
 
-        session(['user_id' => $user->id]);
+        Auth::login($user);
 
         return redirect('/dashboard');
-    }
+}
 
 
     public function showLogin()
