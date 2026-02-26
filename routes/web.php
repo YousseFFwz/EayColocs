@@ -43,3 +43,10 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/category/{id}', [CategoryController::class, 'destroy']);
 });
+
+
+use App\Http\Controllers\ExpenseController;
+
+
+Route::post('/colocation/{id}/expense', [ExpenseController::class, 'store'])
+    ->middleware('auth');

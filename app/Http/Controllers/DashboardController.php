@@ -8,17 +8,15 @@ use App\Models\User;
 
 class DashboardController extends Controller
 {
-    public function index()
-    {
-        $userId = Auth::id();
+ public function index()
+{
+    $user = Auth::user();
 
-        $membership = ColocationUser::where('user_id', $userId)->first();
+    $colocations = $user->colocations;
+    $users = User::select('id','name','email','role')->get();
 
-        if ($membership) {
-            return redirect('/colocation/' . $membership->colocation_id);
-        }
-        $users = User::all();
+    return view('dashboard', compact('colocations', 'users'));
+}
 
-        return view('dashboard', compact('users'));
-    }
+
 }

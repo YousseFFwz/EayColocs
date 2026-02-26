@@ -19,10 +19,16 @@ public function create()
 
 public function store(Request $request)
 {
-    
     $request->validate([
         'name' => 'required'
     ]);
+
+    $user = Auth::user();
+
+    if ($user->colocations()->exists()) {
+        return redirect('/dashboard')
+            ->with('error', 'You already have a colocation.');
+    }
 
     $colocation = Colocation::create([
         'name' => $request->name,
@@ -30,15 +36,12 @@ public function store(Request $request)
         'status' => 'active'
     ]);
 
-    
-    ColocationUser::create([
-        'user_id' => Auth::id(),
-        'colocation_id' => $colocation->id,
+    $colocation->users()->attach($user->id, [
         'role' => 'owner',
         'joined_at' => now()
     ]);
 
-    return redirect('/dashboard');
+    return redirect('/colocation/' . $colocation->id);
 }
 
 
