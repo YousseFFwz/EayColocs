@@ -1,3 +1,6 @@
+@php
+    use Illuminate\Support\Facades\Auth;
+@endphp
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +24,7 @@
     <div class="max-w-6xl mx-auto mt-10 px-6">
 
         <h2 class="text-3xl font-bold mb-8">
-            Welcome 👋
+                 Welcome, {{ Auth::user()->name }} 
         </h2>
 
         <!-- Top Cards -->
