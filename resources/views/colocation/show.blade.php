@@ -23,6 +23,12 @@
     </form>
 </nav>
 
+@if(session('success'))
+    <div class="bg-green-100 text-green-700 p-3 rounded mb-4">
+        {{ session('success') }}
+    </div>
+@endif
+
 <div class="max-w-7xl mx-auto px-6 py-10">
 
     <!-- Header Card -->
@@ -185,6 +191,15 @@
         @endforeach
     </div>
 
+  @if($pivot->role === 'owner')
+<form method="POST" action="/colocation/{{ $colocation->id }}/invite">
+    @csrf
+    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg">
+        Generate Invite Link
+    </button>
+</form>
+@endif
+
     <!-- Danger Zone -->
     <div class="bg-white rounded-2xl shadow p-6 border border-red-200">
         <h3 class="text-lg font-semibold text-red-600 mb-4">
@@ -205,6 +220,7 @@
             @endif
         </form>
     </div>
+
 
 </div>
 

@@ -42,7 +42,7 @@ class AuthController extends Controller
     }
 
 
-     public function login(Request $request)
+public function login(Request $request)
 {
     $credentials = $request->only('email', 'password');
 
@@ -55,6 +55,14 @@ class AuthController extends Controller
     if ($user->is_banned) {
         Auth::logout();
         return back()->with('error', 'You are banned');
+    }
+
+    if (session()->has('invite_token')) {
+
+        $token = session('invite_token');
+        session()->forget('invite_token');
+
+        return redirect('/invite/' . $token);
     }
 
     if ($user->role === 'admin') {

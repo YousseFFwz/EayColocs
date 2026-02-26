@@ -49,7 +49,16 @@ use App\Http\Controllers\ExpenseController;
 
 
 Route::post('/colocation/{id}/expense', [ExpenseController::class, 'store'])
-    ->middleware('auth');
+->middleware('auth');
 
 Route::post('/colocation/{id}/quit', [ColocationController::class, 'quit'])
+->middleware('auth');
+
+
+
+use App\Http\Controllers\InvitationController;
+
+Route::post('/colocation/{id}/invite', [InvitationController::class, 'generate'])
     ->middleware('auth');
+
+Route::get('/invite/{token}', [InvitationController::class, 'join']);
