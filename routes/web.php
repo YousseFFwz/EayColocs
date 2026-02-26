@@ -33,3 +33,13 @@ Route::middleware('auth')
     ->get('/colocation/{id}', [ColocationController::class, 'show']);
 
 
+use App\Http\Controllers\CategoryController;
+
+Route::middleware('auth')->group(function () {
+
+    Route::post('/colocation/{id}/category', [CategoryController::class, 'store']);
+
+    Route::put('/category/{id}', [CategoryController::class, 'update']);
+
+    Route::delete('/category/{id}', [CategoryController::class, 'destroy']);
+});
