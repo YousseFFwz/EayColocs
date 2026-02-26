@@ -176,4 +176,35 @@ public function show($id)
     }
 
 
+
+
+
+
+
+
+public function quit($id)
+{
+    $userId = Auth::id();
+
+    $membership = ColocationUser::where('colocation_id', $id)
+        ->where('user_id', $userId)
+        ->first();
+
+    if (!$membership) {
+        return redirect('/dashboard')->with('error', 'Unauthorized');
+    }
+
+    if ($membership->role === 'owner') {
+
+        Colocation::findOrFail($id)->delete();
+
+        return redirect('/dashboard')
+            ->with('success', 'Colocation cancelled successfully.');
+    }
+
+    $membership->delete();
+
+    return redirect('/dashboard')
+        ->with('success', 'You left the colocation.');
+}
 }

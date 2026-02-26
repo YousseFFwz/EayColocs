@@ -50,3 +50,6 @@ use App\Http\Controllers\ExpenseController;
 
 Route::post('/colocation/{id}/expense', [ExpenseController::class, 'store'])
     ->middleware('auth');
+
+Route::post('/colocation/{id}/quit', [ColocationController::class, 'quit'])
+    ->middleware('auth');
