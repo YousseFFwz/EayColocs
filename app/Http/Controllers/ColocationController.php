@@ -7,5 +7,14 @@ use App\Models\Colocation;
 
 class ColocationController extends Controller
 {
-    //
+
+
+public function create()
+{
+ return view('colocation.create');
+}
+
+
+
+
 }
