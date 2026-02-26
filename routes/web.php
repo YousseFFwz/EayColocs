@@ -29,3 +29,7 @@ use App\Http\Controllers\ColocationController;
 Route::get('/colocation/create', [ColocationController::class, 'create']);
 Route::post('/colocation/store', [ColocationController::class, 'store']);
 
+Route::middleware('auth')
+    ->get('/colocation/{id}', [ColocationController::class, 'show']);
+
+
