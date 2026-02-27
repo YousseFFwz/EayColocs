@@ -21,6 +21,11 @@
         </button>
     </form>
 </nav>
+@if(session('error'))
+    <div class="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-6">
+        {{ session('error') }}
+    </div>
+@endif
 
 <div class="max-w-6xl mx-auto mt-10 px-6">
 
@@ -43,10 +48,12 @@
                 You are not in any colocation yet.
             </p>
 
-            <a href="/colocation/create"
-               class="inline-block mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                Create Colocation
-            </a>
+            @if($colocations->count() == 0)
+                <a href="/colocation/create"
+                class="bg-blue-600 text-white px-6 py-2 rounded-lg">
+                    Create Colocation
+                </a>
+            @endif
         @endif
 
     </div>

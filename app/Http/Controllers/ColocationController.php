@@ -18,18 +18,20 @@ public function create()
 }
 
 
+
+
 public function store(Request $request)
 {
-    $request->validate([
-        'name' => 'required'
-    ]);
-
     $user = Auth::user();
 
     if ($user->colocations()->exists()) {
         return redirect('/dashboard')
-            ->with('error', 'You already have a colocation.');
+            ->with('error', 'You already belong to a colocation.');
     }
+
+    $request->validate([
+        'name' => 'required'
+    ]);
 
     $colocation = Colocation::create([
         'name' => $request->name,
@@ -77,8 +79,12 @@ public function show($id)
 
         if ($membersCount > 0) {
 
-            $total = $colocation->expenses->sum('amount');
-            $part = $total / $membersCount;
+        $activeUserIds = $colocation->users->pluck('id');
+
+        $total = $colocation->expenses
+            ->whereIn('user_id', $activeUserIds)
+            ->sum('amount');
+                $part = $total / $membersCount;
 
             foreach ($colocation->users as $user) {
 
@@ -184,8 +190,11 @@ public function quit($id)
 
     $membersCount = $colocation->users->count();
 
-    $total = $colocation->expenses->sum('amount');
+    $activeUserIds = $colocation->users->pluck('id');
 
+    $total = $colocation->expenses
+        ->whereIn('user_id', $activeUserIds)
+        ->sum('amount');
     $share = $membersCount > 0 ? $total / $membersCount : 0;
 
 

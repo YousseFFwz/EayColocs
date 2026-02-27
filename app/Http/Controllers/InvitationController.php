@@ -25,26 +25,29 @@ class InvitationController extends Controller
     }
 
     public function join($token)
-    {
-        $invitation = Invitation::where('token', $token)->firstOrFail();
+{
+    $invitation = Invitation::where('token', $token)->firstOrFail();
 
-        if (!Auth::check()) {
-
-            session(['invite_token' => $token]);
-
-            return redirect('/login');
-        }
-
-        $user = Auth::user();
-
-        ColocationUser::firstOrCreate([
-            'user_id' => $user->id,
-            'colocation_id' => $invitation->colocation_id,
-        ], [
-            'role' => 'member',
-            'joined_at' => now()
-        ]);
-
-        return redirect('/colocation/' . $invitation->colocation_id);
+    if (!Auth::check()) {
+        session(['invite_token' => $token]);
+        return redirect('/login');
     }
+
+    $user = Auth::user();
+
+    if ($user->colocations()->exists()) {
+        return redirect('/dashboard')
+            ->with('error', 'You already belong to a colocation.');
+    }
+
+    ColocationUser::firstOrCreate([
+        'user_id' => $user->id,
+        'colocation_id' => $invitation->colocation_id,
+    ], [
+        'role' => 'member',
+        'joined_at' => now()
+    ]);
+
+    return redirect('/colocation/' . $invitation->colocation_id);
+}
 }
