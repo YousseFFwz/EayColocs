@@ -62,3 +62,8 @@ Route::post('/colocation/{id}/invite', [InvitationController::class, 'generate']
     ->middleware('auth');
 
 Route::get('/invite/{token}', [InvitationController::class, 'join']);
+
+
+Route::post('/colocation/{colocation}/remove/{user}', 
+    [ColocationController::class, 'removeMember']
+)->middleware('auth');

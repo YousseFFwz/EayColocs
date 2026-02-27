@@ -61,7 +61,7 @@
                     @if($pivot->role === 'owner' && $user->pivot->role === 'member')
                         <form method="POST" action="/colocation/{{ $colocation->id }}/remove/{{ $user->id }}">
                             @csrf
-                            <button class="text-red-500 text-sm hover:underline">
+                            <button class="text-red-600 text-sm hover:underline">
                                 Remove
                             </button>
                         </form>

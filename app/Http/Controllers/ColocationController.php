@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Colocation;
 use App\Models\ColocationUser;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ColocationController extends Controller
 {
@@ -235,4 +236,48 @@ public function quit($id)
     return redirect('/dashboard')
         ->with('success', 'You left the colocation.');
   }
+
+
+
+  
+
+public function removeMember($colocationId, $userId)
+{
+    $authUser = Auth::user();
+
+    $colocation = Colocation::with('users')->findOrFail($colocationId);
+
+    // تحقق أن اللي داير العملية owner
+    $ownerCheck = ColocationUser::where('colocation_id', $colocationId)
+        ->where('user_id', $authUser->id)
+        ->where('role', 'owner')
+        ->first();
+
+    if (!$ownerCheck) {
+        return back()->with('error', 'Unauthorized.');
+    }
+
+    // ما يقدرش يخرج راسو
+    if ($authUser->id == $userId) {
+        return back()->with('error', 'Owner cannot remove himself.');
+    }
+
+    // تحقق أن العضو موجود
+    $membership = ColocationUser::where('colocation_id', $colocationId)
+        ->where('user_id', $userId)
+        ->first();
+
+    if (!$membership) {
+        return back()->with('error', 'User not found.');
+    }
+
+    // ما نسمحوش يخرج owner آخر
+    if ($membership->role === 'owner') {
+        return back()->with('error', 'Cannot remove another owner.');
+    }
+
+    $membership->delete();
+
+    return back()->with('success', 'Member removed successfully.');
+}
 }
