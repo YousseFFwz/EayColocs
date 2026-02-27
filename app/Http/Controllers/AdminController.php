@@ -35,7 +35,17 @@ public function dashboard()
     ));
 }
 
+public function ban($id)
+{
+    if (Auth::user()->role !== 'admin') {
+        abort(403);
+    }
 
+    $user = User::findOrFail($id);
+    $user->update(['is_banned' => true]);
 
+    return back()->with('success', 'User banned.');
+}
 
+ 
 }
