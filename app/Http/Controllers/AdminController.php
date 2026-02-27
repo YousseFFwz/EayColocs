@@ -47,5 +47,27 @@ public function ban($id)
     return back()->with('success', 'User banned.');
 }
 
- 
+
+
+
+public function unban($id)
+{
+    if (Auth::user()->role !== 'admin') {
+        abort(403);
+    }
+
+    $user = User::findOrFail($id);
+    $user->update(['is_banned' => false]);
+
+    return back()->with('success', 'User unbanned.');
+}
+
+public function viewColocation($id)
+{
+    if (Auth::user()->role !== 'admin') {
+        abort(403);
+    }
+
+    return redirect('/colocation/' . $id);
+}
 }
