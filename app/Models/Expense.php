@@ -15,19 +15,16 @@ class Expense extends Model
     'colocation_id'
 ];
 
-// 🔥 Expense kaynتمي ل User
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // 🔥 Expense kaynتمي ل Category
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    // 🔥 Expense kaynتمي ل Colocation
     public function colocation()
     {
         return $this->belongsTo(Colocation::class);

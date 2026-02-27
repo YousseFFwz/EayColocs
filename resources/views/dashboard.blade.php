@@ -98,6 +98,7 @@
                     <th class="py-3 px-4">Name</th>
                     <th class="py-3 px-4">Email</th>
                     <th class="py-3 px-4">Role</th>
+                    <th class="py-3 px-4">reputation </th>
                 </tr>
             </thead>
 
@@ -121,6 +122,14 @@
                                     User
                                 </span>
                             @endif
+                        </td>
+                        <td class="py-3 px-4 text-gray-600">
+                            <p class="text-sm text-gray-500">
+                                Reputation:
+                                <span class="font-semibold">
+                                     {{ $userItem->reputation }}                              
+                                </span>
+                            </p>
                         </td>
                     </tr>
                 @endforeach

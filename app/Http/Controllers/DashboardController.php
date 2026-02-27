@@ -13,8 +13,7 @@ class DashboardController extends Controller
     $user = Auth::user();
 
     $colocations = $user->colocations;
-    $users = User::select('id','name','email','role')->get();
-
+    $users = User::all();
     return view('dashboard', compact('colocations', 'users'));
 }
 

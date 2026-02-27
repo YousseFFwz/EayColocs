@@ -50,7 +50,6 @@ public function store(Request $request)
 
 public function show($id)
     {
-        // 1️⃣ جلب colocation مع العلاقات
         $colocation = Colocation::with([
             'users',
             'expenses.user',
@@ -58,10 +57,8 @@ public function show($id)
             'payments'
         ])->findOrFail($id);
 
-        // 2️⃣ جلب ID المستخدم الحالي
         $currentUserId = Auth::id();
 
-        // 3️⃣ التحقق هل المستخدم عضو في هذه colocation
         $pivot = ColocationUser::where('colocation_id', $id)
             ->where('user_id', $currentUserId)
             ->first();
@@ -71,7 +68,6 @@ public function show($id)
                 ->with('error', 'Access denied');
         }
 
-        // 4️⃣ تهيئة المتغيرات
         $total = 0;
         $balances = [];
         $transactions = [];
@@ -80,18 +76,15 @@ public function show($id)
 
         if ($membersCount > 0) {
 
-            // 5️⃣ حساب مجموع المصاريف
             $total = $colocation->expenses->sum('amount');
             $part = $total / $membersCount;
 
             foreach ($colocation->users as $user) {
 
-                // شحال خلّص فالمصاريف
                 $paidExpenses = $colocation->expenses
                     ->where('user_id', $user->id)
                     ->sum('amount');
 
-                // شحال صيفط
                 $paymentsSent = $user->paymentsSent()
                     ->where('colocation_id', $id)
                     ->sum('amount');
@@ -100,10 +93,8 @@ public function show($id)
                     ->where('colocation_id', $id)
                     ->sum('amount');
 
-                // شحال ساهم فعلياً
                 $paid = $paidExpenses + $paymentsReceived - $paymentsSent;
 
-                // الرصيد النهائي
                 $balance = $paid - $part;
 
                 $balances[] = [
@@ -113,7 +104,6 @@ public function show($id)
                 ];
             }
 
-            // ===== حساب شكون يخلّص شكون =====
 
             $creditors = [];
             $debtors = [];
@@ -165,7 +155,6 @@ public function show($id)
             }
         }
 
-        // 6️⃣ إرسال البيانات للـ view
         return view('colocation.show', compact(
             'colocation',
             'pivot',
@@ -184,27 +173,66 @@ public function show($id)
 
 public function quit($id)
 {
-    $userId = Auth::id();
+    $user = Auth::user();
+
+    $colocation = Colocation::with(['users','expenses'])->findOrFail($id);
 
     $membership = ColocationUser::where('colocation_id', $id)
-        ->where('user_id', $userId)
-        ->first();
+        ->where('user_id', $user->id)
+        ->firstOrFail();
 
-    if (!$membership) {
-        return redirect('/dashboard')->with('error', 'Unauthorized');
-    }
+    $membersCount = $colocation->users->count();
+
+    $total = $colocation->expenses->sum('amount');
+
+    $share = $membersCount > 0 ? $total / $membersCount : 0;
+
+
+
+    $paidExpenses = $colocation->expenses
+    ->where('user_id', $user->id)
+    ->sum('amount');
+
+    $paymentsSent = $user->paymentsSent
+    ->where('colocation_id', $id)
+    ->sum('amount');
+
+    $paymentsReceived = $user->paymentsReceived
+    ->where('colocation_id', $id)
+    ->sum('amount');
+
+    $paid = $paidExpenses + $paymentsReceived - $paymentsSent;
+
+    $balance = round($paid - $share, 2);
+
+    
+
+
 
     if ($membership->role === 'owner') {
 
-        Colocation::findOrFail($id)->delete();
+        if ($balance < 0) {
+            return back()->with('error', 'You must settle your balance before cancelling.');
+        }
+
+        $colocation->delete();
 
         return redirect('/dashboard')
-            ->with('success', 'Colocation cancelled successfully.');
+            ->with('success', 'Colocation cancelled.');
+    }
+
+   
+
+    
+    if ($balance < 0) {
+        $user->decrement('reputation');
+    } else {
+        $user->increment('reputation');
     }
 
     $membership->delete();
 
     return redirect('/dashboard')
         ->with('success', 'You left the colocation.');
-}
+  }
 }
