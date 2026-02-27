@@ -67,3 +67,19 @@ Route::get('/invite/{token}', [InvitationController::class, 'join']);
 Route::post('/colocation/{colocation}/remove/{user}', 
     [ColocationController::class, 'removeMember']
 )->middleware('auth');
+
+
+
+
+use App\Http\Controllers\AdminController;
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/admin', [AdminController::class, 'dashboard'])
+        ->name('admin.dashboard');
+
+    Route::post('/admin/user/{id}/ban', [AdminController::class, 'ban']);
+    Route::post('/admin/user/{id}/unban', [AdminController::class, 'unban']);
+
+    Route::get('/admin/colocation/{id}', [AdminController::class, 'viewColocation']);
+});
